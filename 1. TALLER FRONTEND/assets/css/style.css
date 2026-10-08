@@ -202,3 +202,31 @@ footer p {
     padding: 0.5rem;
   }
 }
+
+/* Ojo dentro del campo de contraseña */
+.password-field {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.login-container .password-field input {
+  box-sizing: border-box;
+  margin-bottom: 0;
+  padding-right: 3rem;
+}
+
+.login-container .password-field button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 2.5rem;
+  padding: 0;
+  background: transparent;
+  color: var(--text-color);
+  font-size: 1.2rem;
+}
+
+.login-container .password-field button:hover {
+  background: transparent;
+}
