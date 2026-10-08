@@ -17,6 +17,27 @@ document.addEventListener('DOMContentLoaded', function () {
   const validationMessage = document.getElementById('validation-message');
   const preloader = document.getElementById('preloader');
   const toggleButton = document.getElementById('toggle-button');
+  const togglePassword = document.getElementById('toggle-password');
+
+if (togglePassword) {
+  togglePassword.addEventListener('click', function () {
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirm-password');
+    const showPassword = password.type === 'password';
+
+    password.type = showPassword ? 'text' : 'password';
+
+    if (confirmPassword) {
+      confirmPassword.type = showPassword ? 'text' : 'password';
+    }
+
+    togglePassword.textContent = showPassword
+      ? 'Ocultar contraseñas'
+      : 'Mostrar contraseñas';
+
+    togglePassword.setAttribute('aria-pressed', String(showPassword));
+  });
+}
   showPreloader(false); // Hide preloader initially
 
   document.addEventListener('submit', function (event) {
