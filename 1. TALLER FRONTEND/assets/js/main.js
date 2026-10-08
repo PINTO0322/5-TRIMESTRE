@@ -85,6 +85,19 @@ document.addEventListener('DOMContentLoaded', function () {
           validate = false;
         }
       }
+      const password = objForm.querySelector('#password');
+const confirmPassword = objForm.querySelector('#confirm-password');
+
+if (password && confirmPassword &&
+    password.value !== confirmPassword.value) {
+  messageValidation(
+    'Las contraseñas no coinciden.',
+    'error',
+    3000,
+    'fade'
+  );
+  validate = false;
+}
 
       return validate;
     }
