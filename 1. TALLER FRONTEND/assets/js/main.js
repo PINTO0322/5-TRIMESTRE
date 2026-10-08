@@ -61,7 +61,12 @@ if (togglePassword) {
       console.log('Form validation passed, proceeding with submission...');
       const btnSubmit = objForm.querySelector('button[type="submit"]');
       btnSubmit.disabled = true; // Disable the submit button to prevent multiple submissions
+      
+const inputs = objForm.querySelectorAll('input');
 
+inputs.forEach(function (input) {
+  input.readOnly = true;
+});
       sendData(objForm, controller.signal)
         .then(response => {
           console.log('Data sent successfully:', response);
@@ -79,7 +84,10 @@ if (togglePassword) {
             btnSubmit.disabled = false; // Re-enable the submit button after error
           }
         }).finally(() => {
-          showPreloader(false); // Hide preloader after submission attempt
+          inputs.forEach(function (input) {
+         input.readOnly = false;
+});
+        showPreloader(false); // Hide preloader after submission attempt
         });
     } else {
       console.log('Form validation failed, aborting submission.');
@@ -140,6 +148,9 @@ if (password && confirmPassword &&
     }
   }
   async function sendData(form, signal) {
+    await new Promise(function (resolve) {
+  setTimeout(resolve, 2000);
+});
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
     console.log('Sending data:', data);
