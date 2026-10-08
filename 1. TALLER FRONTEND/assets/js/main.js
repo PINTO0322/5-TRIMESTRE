@@ -20,23 +20,33 @@ document.addEventListener('DOMContentLoaded', function () {
   const togglePassword = document.getElementById('toggle-password');
 
 if (togglePassword) {
-  togglePassword.addEventListener('click', function () {
-    const password = document.getElementById('password');
-    const confirmPassword = document.getElementById('confirm-password');
-    const showPassword = password.type === 'password';
+  const password = document.getElementById('password');
+  const confirmPassword = document.getElementById('confirm-password');
 
-    password.type = showPassword ? 'text' : 'password';
+  if (confirmPassword) {
+    // Registro y restablecimiento: conservar el funcionamiento por clic.
+    togglePassword.addEventListener('click', function () {
+      const showPassword = password.type === 'password';
 
-    if (confirmPassword) {
+      password.type = showPassword ? 'text' : 'password';
       confirmPassword.type = showPassword ? 'text' : 'password';
-    }
 
-    togglePassword.textContent = showPassword
-      ? 'Ocultar contraseñas'
-      : 'Mostrar contraseñas';
+      togglePassword.textContent = showPassword
+        ? 'Ocultar contraseñas'
+        : 'Mostrar contraseñas';
 
-    togglePassword.setAttribute('aria-pressed', String(showPassword));
-  });
+      togglePassword.setAttribute('aria-pressed', String(showPassword));
+    });
+  } else {
+    // Inicio de sesión: mostrar mientras el puntero esté sobre el ojo.
+    togglePassword.addEventListener('pointerenter', function () {
+      password.type = 'text';
+    });
+
+    togglePassword.addEventListener('pointerleave', function () {
+      password.type = 'password';
+    });
+  }
 }
   showPreloader(false); // Hide preloader initially
 
