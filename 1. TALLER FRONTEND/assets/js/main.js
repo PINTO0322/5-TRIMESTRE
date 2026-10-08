@@ -48,6 +48,22 @@ if (togglePassword) {
     });
   }
 }
+
+const passwordEyes = document.querySelectorAll('.password-eye');
+
+passwordEyes.forEach(function (eye) {
+  const input = document.getElementById(eye.dataset.passwordTarget);
+
+  if (!input) return;
+
+  eye.addEventListener('pointerenter', function () {
+    input.type = 'text';
+  });
+
+  eye.addEventListener('pointerleave', function () {
+    input.type = 'password';
+  });
+});
   showPreloader(false); // Hide preloader initially
 
   document.addEventListener('submit', function (event) {
