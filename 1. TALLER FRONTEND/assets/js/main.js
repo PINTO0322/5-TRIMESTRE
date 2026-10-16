@@ -1,212 +1,53 @@
-/*Author: DIEGO CASALLAS
-Date: 2026-10-02
-Description: This script handles form validation and submission using the AbortController API. It validates input
-fields, sends data asynchronously, and provides user feedback through messages.
+import './components/HeaderComponent.js';
+import './components/FooterComponent.js';
+import './components/AuthForm.js';
 
-*/
-window.AbortController = window.AbortController || require('abort-controller').AbortController;
-console.log('AbortController is available:', !!window.AbortController);
-document.addEventListener('DOMContentLoaded', function () {
-  console.log('DOM fully loaded and parsed');
+const appContainer = document.getElementById('app-container');
+const preloader = document.getElementById('preloader');
+const allowedViews = new Set(['login', 'register', 'forgot', 'reset']);
+let pending = null;
 
+document.addEventListener('navigate', event => {
+  const view = event.detail.view;
+  if (!allowedViews.has(view)) return;
+  pending?.abort();
+  preloader.hidden = true;
+  const auth = appContainer.querySelector('auth-form');
+  auth.setAttribute('type', view);
+  auth.shadowRoot.querySelector('h2').focus();
+});
+
+document.addEventListener('form-submit', async event => {
+  const auth = appContainer.querySelector('auth-form');
+  if (pending || event.detail.formElement !== auth.shadowRoot.querySelector('form') || !auth.validate()) return;
   const controller = new AbortController();
-  console.log('AbortController initialized:', controller);
-
-  /**Variables*/
-
-  const validationMessage = document.getElementById('validation-message');
-  const preloader = document.getElementById('preloader');
-  const toggleButton = document.getElementById('toggle-button');
-  const togglePassword = document.getElementById('toggle-password');
-
-if (togglePassword) {
-  const password = document.getElementById('password');
-  const confirmPassword = document.getElementById('confirm-password');
-
-  if (confirmPassword) {
-    // Registro y restablecimiento: conservar el funcionamiento por clic.
-    togglePassword.addEventListener('click', function () {
-      const showPassword = password.type === 'password';
-
-      password.type = showPassword ? 'text' : 'password';
-      confirmPassword.type = showPassword ? 'text' : 'password';
-
-      togglePassword.textContent = showPassword
-        ? 'Ocultar contraseñas'
-        : 'Mostrar contraseñas';
-
-      togglePassword.setAttribute('aria-pressed', String(showPassword));
-    });
-  } else {
-    // Inicio de sesión: mostrar mientras el puntero esté sobre el ojo.
-    togglePassword.addEventListener('pointerenter', function () {
-      password.type = 'text';
-    });
-
-    togglePassword.addEventListener('pointerleave', function () {
-      password.type = 'password';
-    });
+  pending = controller;
+  auth.setBusy(true);
+  preloader.hidden = false;
+  document.getElementById('cancel-request').focus();
+  try {
+    await simulateRequest(controller.signal);
+    auth.showMessage('¡Operación ejecutada con éxito mediante componentes! Demostración: no se enviaron datos ni se modificaron cuentas.', 'success');
+  } catch (error) {
+    if (auth.shadowRoot.querySelector('form') !== event.detail.formElement) return;
+    if (error.name === 'AbortError') auth.showMessage('Operación cancelada.', 'error');
+    else auth.showMessage('No se pudo completar la operación.', 'error');
+  } finally {
+    if (auth.shadowRoot.querySelector('form') === event.detail.formElement) auth.setBusy(false);
+    if (pending === controller) { pending = null; preloader.hidden = true; }
+    if (auth.shadowRoot.querySelector('form') === event.detail.formElement) auth.shadowRoot.querySelector('button[type=submit]').focus();
   }
+});
+
+document.getElementById('cancel-request').addEventListener('click', () => pending?.abort());
+window.addEventListener('pagehide', () => pending?.abort());
+
+function simulateRequest(signal) {
+  // Simulación cancelable: no usa red ni almacena contraseñas.
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => { signal.removeEventListener('abort', cancel); resolve(); }, 1200);
+    function cancel() { clearTimeout(timer); signal.removeEventListener('abort', cancel); reject(new DOMException('Cancelada', 'AbortError')); }
+    signal.addEventListener('abort', cancel, { once: true });
+    if (signal.aborted) cancel();
+  });
 }
-
-const passwordEyes = document.querySelectorAll('.password-eye');
-
-passwordEyes.forEach(function (eye) {
-  const input = document.getElementById(eye.dataset.passwordTarget);
-
-  if (!input) return;
-
-  eye.addEventListener('pointerenter', function () {
-    input.type = 'text';
-  });
-
-  eye.addEventListener('pointerleave', function () {
-    input.type = 'password';
-  });
-});
-  showPreloader(false); // Hide preloader initially
-
-  document.addEventListener('submit', function (event) {
-    event.preventDefault();
-    console.log('Form submission intercepted:', event.target);
-    showPreloader(true); // Show preloader when form is submitted
-    // Simulate an asynchronous operation that can be aborted
-    const objForm = document.querySelector('form');
-
-    if (formValidation(objForm)) {
-      console.log('Form validation passed, proceeding with submission...');
-      const btnSubmit = objForm.querySelector('button[type="submit"]');
-      btnSubmit.disabled = true; // Disable the submit button to prevent multiple submissions
-      
-const inputs = objForm.querySelectorAll('input');
-
-inputs.forEach(function (input) {
-  input.readOnly = true;
-});
-      sendData(objForm, controller.signal)
-        .then(response => {
-          console.log('Data sent successfully:', response);
-          messageValidation('Form submitted successfully!', 'success', 3000, 'fade');
-          btnSubmit.disabled = false; // Re-enable the submit button after submission
-        })
-        .catch(error => {
-          if (error.name === 'AbortError') {
-            console.log('Request was aborted');
-            messageValidation('Request was aborted.', 'error', 3000, 'fade');
-            btnSubmit.disabled = false; // Re-enable the submit button after cancellation
-          } else {
-            console.error('Error sending data:', error);
-            messageValidation('Error sending data.', 'error', 3000, 'fade');
-            btnSubmit.disabled = false; // Re-enable the submit button after error
-          }
-        }).finally(() => {
-          inputs.forEach(function (input) {
-         input.readOnly = false;
-});
-        showPreloader(false); // Hide preloader after submission attempt
-        });
-    } else {
-      console.log('Form validation failed, aborting submission.');
-      controller.abort(); // Abort the request if validation fails
-      showPreloader(false); // Hide preloader after submission attempt
-    }
-
-  }
-  );
-
-  function formValidation(objForm) {
-    let validate = true;
-    const inputs = objForm.querySelectorAll('input, textarea, select');
-    try {
-      for (const input of inputs) {
-        if (!input.checkValidity()) {
-          console.log(`Validation failed for input: ${input.name}`);
-          messageValidation(input.validationMessage, 'error', 3000, 'fade');
-          validate = false;
-        }
-        if (input.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value)) {
-          console.log(`Invalid email format for input: ${input.name}`);
-          messageValidation('Invalid email format.', 'error', 3000, 'fade');
-          validate = false;
-        }
-        if (input.type === 'tel' && !/^\+?[0-9\s\-()]+$/.test(input.value)) {
-          console.log(`Invalid phone number format for input: ${input.name}`);
-          messageValidation('Invalid phone number format.', 'error', 3000, 'fade');
-          validate = false;
-        }
-        if (input.type === 'password' && input.value.length < 8) {
-          console.log(`Password too short for input: ${input.name}`);
-          messageValidation('Password must be at least 8 characters long.', 'error', 3000, 'fade');
-          validate = false;
-        }
-      }
-      const password = objForm.querySelector('#password');
-const confirmPassword = objForm.querySelector('#confirm-password');
-
-if (password && confirmPassword &&
-    password.value !== confirmPassword.value) {
-  messageValidation(
-    'Las contraseñas no coinciden.',
-    'error',
-    3000,
-    'fade'
-  );
-  validate = false;
-}
-
-      return validate;
-    }
-    catch (error) {
-      console.error('Error during form validation:', error);
-      messageValidation('An error occurred during validation.', 'error', 3000, 'fade');
-      return false;
-
-    }
-  }
-  async function sendData(form, signal) {
-    await new Promise(function (resolve) {
-  setTimeout(resolve, 2000);
-});
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
-    console.log('Sending data:', data);
-
-    signal.addEventListener('abort', () => {
-      console.log('Abort signal received, cancelling request...');
-    });
-
-    return null;
-
-
-  }
-  function messageValidation(message, type, time, animation) {
-    validationMessage.textContent = message;
-    validationMessage.style.display = 'block';
-    validationMessage.className = `validation-message ${type} ${animation}`;
-
-    setTimeout(() => {
-      validationMessage.style.display = 'none';
-    }, time);
-  }
-
-  function showPreloader(visible) {
-
-    setTimeout(() => {
-      preloader.style.display = visible ? 'block' : 'none';
-      preloader.className = visible ? 'preloader show' : 'preloader hide';
-      preloader.textContent = visible ? 'Cargando...' : '';
-      preloader.style.opacity = visible ? '1' : '0';
-    }, 1000); // Delay of 1 second before hiding the preloader
-
-  }
-  /* Toggle button functionality */
-  toggleButton.addEventListener('click', function () {
-    const nav = document.querySelector('nav');
-    if (nav.style.display === 'block') {
-      nav.style.display = 'none';
-    } else {
-      nav.style.display = 'block';
-    }
-  });
-
-});
