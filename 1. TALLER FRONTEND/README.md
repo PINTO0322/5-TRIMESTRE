@@ -1,26 +1,19 @@
-# Taller 2: componentes reutilizables en JavaScript
+# Taller 2: componentes en JavaScript
 
-Basado en el taller de Diego Casallas (SENA, octubre de 2026).
+Continuación del taller de formularios de autenticación.
 
-## Ejecutar
+En esta actividad organicé el menú, el pie de página y los formularios en componentes para reutilizarlos sin repetir el mismo código.
 
-Desde esta carpeta:
+La aplicación permite cambiar entre inicio de sesión, registro, recuperación y nueva contraseña. Incluye validaciones, botones para mostrar las contraseñas y mensajes al completar los formularios.
+
+Los envíos son de prueba: no se crean cuentas ni se envían correos reales.
+
+## Cómo abrirlo
+
+Desde la carpeta del proyecto, ejecutar en la terminal:
 
 ```powershell
 C:\xampp\php\php.exe -S localhost:8000
 ```
 
-Abrir http://localhost:8000. También sirve `py -m http.server 8000`.
-Se necesita un servidor HTTP por los módulos ES; no abrir index.html directamente como archivo.
-
-## Implementación
-
-- HeaderComponent: navegación mediante eventos `navigate`, con menú móvil.
-- FooterComponent: pie reutilizable con Shadow DOM.
-- AuthForm: cuatro vistas por atributo `type`, eventos `form-submit`, registro con usuario, correo, teléfono y confirmación.
-- main.js: orquesta componentes, validación, carga, bloqueo y simulación con AbortController.
-- Los ojos muestran cada contraseña de manera independiente.
-
-Se conserva la arquitectura del PDF. Se completaron el footer como componente, los campos de registro, el acceso a reset, la validación y la cancelación efectiva, que el ejemplo deja parciales.
-
-El envío es simulado: no hay registro real de usuarios, envío de correos ni cambio real de contraseña. No se guardan credenciales.
+Después escribir `http://localhost:8000` en el navegador. Esta dirección funciona únicamente mientras el servidor esté encendido en ese computador.
