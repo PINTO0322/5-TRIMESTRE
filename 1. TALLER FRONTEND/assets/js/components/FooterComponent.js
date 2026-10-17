@@ -1,10 +1,44 @@
-/** Pie de página reutilizable: extensión del ejemplo, cuyo footer era estático. */
 export class FooterComponent extends HTMLElement {
-  constructor() { super(); this.attachShadow({ mode: 'open' }); }
+  constructor() {
+    super();
+
+    const shadow = this.attachShadow({ mode: 'open' });
+
+    shadow.innerHTML = `
+      <style>
+        footer {
+          background-color: var(--primary-color, #4CAF50);
+          color: white;
+          text-align: center;
+          padding: 1rem;
+          width: 100%;
+          box-sizing: border-box;
+          position: relative;
+          bottom: 0;
+        }
+        p {
+          margin: 0;
+          font-family: var(--font-family, 'Arial', sans-serif);
+          font-size: 0.9rem;
+        }
+      </style>
+
+      <footer>
+        <p id="footer-text">
+          &copy; 2026 Sinapsis Technologies. All rights reserved.
+        </p>
+      </footer>
+    `;
+  }
+
   connectedCallback() {
-    this.shadowRoot.innerHTML = `<style>
-      :host { display: block; } footer { padding: 1rem; text-align: center; color: white; background: var(--primary-color, #4caf50); } p { margin: 0; }
-    </style><footer><p>© 2026 Sinapsis Technologies. Componentes Web.</p></footer>`;
+    const company = this.getAttribute('data-company');
+
+    if (company) {
+      this.shadowRoot.getElementById('footer-text').textContent =
+        `\u00A9 2026 ${company}. All rights reserved.`;
+    }
   }
 }
-customElements.define('footer-component', FooterComponent);
+
+customElements.define('app-footer', FooterComponent);
