@@ -3,17 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="assets/css/style.css">
-  <title>Taller de Componentes Front-End</title>
+  <title>Taller de Componentes - Registro</title>
+  <link rel="stylesheet" href="./assets/css/style.css">
 </head>
 <body>
-  <header-component title="Sinapsis Modular"></header-component>
-  <main id="app-container"><auth-form type="login"></auth-form></main>
-  <app-footer data-company="Sinapsis Technologies"></app-footer><footer-component></footer-component>
-  <div class="preloader" id="preloader" hidden>
-    <p role="status">Cargando...</p>
-    <button id="cancel-request" type="button">Cancelar</button>
-  </div>
-  <script type="module" src="assets/js/main.js"></script>
+  <!-- Componente Nav -->
+  <app-nav data-title="Sinapsis Lab"></app-nav>
+  <!-- Contenido Principal -->
+  <main class="main-content">
+    <app-register></app-register>
+  </main>
+  <!-- Componente Footer -->
+  <app-footer data-company="Sinapsis Technologies"></app-footer>
+  <!-- Script Principal -->
+  <script type="module" src="./assets/js/main.js"></script>
 </body>
 </html>
