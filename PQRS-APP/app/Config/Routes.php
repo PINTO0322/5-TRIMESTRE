@@ -47,3 +47,14 @@ $routes->group('api/modules', [
     $routes->put('(:num)', 'ModuleController::update/$1');
     $routes->delete('(:num)', 'ModuleController::delete/$1');
 });
+
+$routes->group('api/users', [
+    'namespace' => 'App\Controllers\Security',
+    'filter'    => 'auth',
+], static function ($routes) {
+    $routes->get('', 'UserController::showAll');
+    $routes->get('(:num)', 'UserController::showId/$1');
+    $routes->post('', 'UserController::create');
+    $routes->put('(:num)', 'UserController::update/$1');
+    $routes->delete('(:num)', 'UserController::delete/$1');
+});
