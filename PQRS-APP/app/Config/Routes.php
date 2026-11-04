@@ -36,3 +36,14 @@ $routes->group('api/permissions', [
     $routes->put('(:num)', 'PermissionController::update/$1');
     $routes->delete('(:num)', 'PermissionController::delete/$1');
 });
+
+$routes->group('api/modules', [
+    'namespace' => 'App\Controllers\Security',
+    'filter'    => 'auth',
+], static function ($routes) {
+    $routes->get('', 'ModuleController::showAll');
+    $routes->get('(:num)', 'ModuleController::showId/$1');
+    $routes->post('', 'ModuleController::create');
+    $routes->put('(:num)', 'ModuleController::update/$1');
+    $routes->delete('(:num)', 'ModuleController::delete/$1');
+});
