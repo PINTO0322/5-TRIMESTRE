@@ -14,3 +14,14 @@ $routes->group(
         $routes->get('permissions', 'AuthController::permissions', ['filter' => 'auth']);
     }
 );
+
+$routes->group('api/roles', [
+    'namespace' => 'App\Controllers\Security',
+    'filter'    => 'auth',
+], static function ($routes) {
+    $routes->get('', 'RoleController::showAll');
+    $routes->get('(:num)', 'RoleController::showId/$1');
+    $routes->post('', 'RoleController::create');
+    $routes->put('(:num)', 'RoleController::update/$1');
+    $routes->delete('(:num)', 'RoleController::delete/$1');
+});
