@@ -1,6 +1,8 @@
 import { ApiService } from './core/ApiService.js';
 import { Loader } from './core/Loader.js';
 import { LocalStorage } from './core/LocalStorage.js';
+import { Forms } from './core/Forms.js';
+import { Alert } from './core/Alert.js';
 
 const acceso = document.querySelector('#login-container');
 const panel = document.querySelector('#main-layout');
@@ -106,11 +108,26 @@ async function mostrarPanel(usuario) {
 
 formulario.addEventListener('submit', async (evento) => {
     evento.preventDefault();
+
+    if (Forms.isLocked(formulario)) return;
+
     mensaje.hidden = true;
-    entrar.disabled = true;
+    Forms.clearErrors(formulario);
+
+    const errores = Forms.validate(formulario, {
+        username: { required: true, label: 'usuario o correo' },
+        password: { required: true, label: 'contraseña' },
+    });
+
+    if (Object.keys(errores).length > 0) {
+        Forms.showErrors(formulario, errores);
+        return;
+    }
+
+    const datos = Forms.serialize(formulario);
+    Forms.lock(formulario);
 
     try {
-        const datos = Object.fromEntries(new FormData(formulario));
         const respuesta = await ApiService.post('/auth/login', datos);
 
         if (!respuesta.ok || !respuesta.data?.token || !respuesta.data?.user) {
@@ -123,8 +140,12 @@ formulario.addEventListener('submit', async (evento) => {
 
         LocalStorage.set('token', respuesta.data.token);
         await mostrarPanel(respuesta.data.user);
+
+        if (!panel.classList.contains('d-none')) {
+            Alert.success('Inicio de sesión correcto.');
+        }
     } finally {
-        entrar.disabled = false;
+        Forms.unlock(formulario);
     }
 });
 
