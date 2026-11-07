@@ -34,8 +34,11 @@ navbar.innerHTML = `
 `;
 
 contenido.innerHTML = `
-    <h1 class="h3">Panel de PQRS</h1>
-    <p id="saludo"></p>
+    <section id="dashboard" aria-labelledby="titulo-dashboard" tabindex="-1">
+        <h1 id="titulo-dashboard" class="h3">Dashboard de PQRS</h1>
+        <p id="saludo"></p>
+        <p>Usa el menú lateral para consultar los módulos disponibles para tu cuenta.</p>
+    </section>
 `;
 
 const formulario = acceso.querySelector('form');
@@ -74,12 +77,25 @@ async function mostrarPanel(usuario) {
         menu.textContent = 'Tu cuenta no tiene módulos asignados.';
     } else {
         for (const modulo of visibles) {
-            const opcion = document.createElement('div');
-            opcion.className = 'py-2';
-            opcion.textContent = modulo.module_name;
-            menu.append(opcion);
-        }
+    if (modulo.route === '#dashboard') {
+        const enlace = document.createElement('a');
+        enlace.className = 'nav-link rounded px-2 py-2';
+        enlace.href = '#dashboard';
+        enlace.textContent = modulo.module_name;
+
+        enlace.addEventListener('click', () => {
+            contenido.querySelector('#dashboard').focus();
+        });
+
+        menu.append(enlace);
+    } else {
+        const opcion = document.createElement('div');
+        opcion.className = 'px-2 py-2';
+        opcion.textContent = modulo.module_name;
+        menu.append(opcion);
     }
+}
+}
 
     sidebar.replaceChildren(menu);
     saludo.textContent = `Bienvenido, ${usuario.username}`;
