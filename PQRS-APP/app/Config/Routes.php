@@ -29,6 +29,15 @@ $routes->group('api/roles', [
 $routes->group('api/permissions', [
     'namespace' => 'App\Controllers\Security',
     'filter'    => 'auth',
+], function ($routes) {
+    $routes->post('assign', 'PermissionAssignmentController::assign');
+    $routes->get('user/(:num)', 'PermissionAssignmentController::getUserPermissions/$1');
+    $routes->delete('revoke', 'PermissionAssignmentController::revoke');
+});
+
+$routes->group('api/permissions', [
+    'namespace' => 'App\Controllers\Security',
+    'filter'    => 'auth',
 ], static function ($routes) {
     $routes->get('', 'PermissionController::showAll');
     $routes->get('(:num)', 'PermissionController::showId/$1');
