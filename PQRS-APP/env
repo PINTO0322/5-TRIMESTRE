@@ -68,5 +68,5 @@
 
 # logger.threshold = 4
 
-JWT_SECRET = 
+JWT_SECRET = reemplazar_por_una_clave_privada
 JWT_EXPIRE = 3600
