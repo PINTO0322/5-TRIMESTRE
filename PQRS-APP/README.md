@@ -1,69 +1,75 @@
-# CodeIgniter 4 Application Starter
+# Proyecto PQRS
 
-## What is CodeIgniter?
+Proyecto desarrollado con CodeIgniter 4 siguiendo los talleres del instructor.
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+Incluye autenticación con JWT, usuarios, roles, módulos, permisos y asignación de permisos. El Front-End permite iniciar sesión y cargar el menú según los permisos del usuario.
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+## Requisitos
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+- PHP 8.2 o superior.
+- Composer.
+- MySQL o MariaDB.
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+## Instalación
 
-## Installation & updates
+Abrir una terminal dentro de PQRS-APP e instalar las dependencias:
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+```powershell
+composer install
+```
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+Crear la configuración local:
 
-## Setup
+```powershell
+Copy-Item env .env
+```
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+En phpMyAdmin, crear la base de datos `pqrs_system` e importar:
 
-## Important Change with index.php
+```text
+database/pqrs_system.sql
+```
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+La importación debe hacerse en una base vacía porque el archivo contiene instrucciones que reemplazan tablas.
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+En `.env`, configurar los valores del equipo:
 
-**Please** read the user guide for a better explanation of how CI4 works!
+```ini
+CI_ENVIRONMENT = development
+database.default.hostname = localhost
+database.default.database = pqrs_system
+database.default.username = root
+database.default.password =
+database.default.DBDriver = MySQLi
+database.default.port = 3306
+JWT_SECRET = colocar_una_clave_privada
+JWT_EXPIRE = 3600
+```
 
-## Repository Management
+Generar una clave y copiar el resultado en `JWT_SECRET`:
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+```powershell
+php -r "echo bin2hex(random_bytes(32));"
+```
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+El archivo `.env` contiene la configuración privada y no se sube a GitHub.
 
-## Server Requirements
+## Abrir el proyecto
 
-PHP version 8.2 or higher is required, with the following extensions installed:
+Con MySQL o MariaDB encendido, ejecutar:
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+```powershell
+php spark serve --host 127.0.0.1 --port 8081
+```
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - The end of life date for PHP 8.1 was December 31, 2025.
-> - If you are still using below PHP 8.2, you should upgrade immediately.
-> - The end of life date for PHP 8.2 will be December 31, 2026.
+Abrir en el navegador:
 
-Additionally, make sure that the following extensions are enabled in your PHP:
+```text
+http://127.0.0.1:8081/index.html
+```
 
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+Dejar la terminal abierta mientras se usa la aplicación.
+
+## Estado
+
+La implementación de seguridad y la estructura inicial del Front-End están disponibles. Las pruebas finales del checklist del instructor están pendientes de completar.
