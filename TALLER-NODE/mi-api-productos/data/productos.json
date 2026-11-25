@@ -1,0 +1,14 @@
+[
+  {
+    "id": "1793993693113",
+    "nombre": "Mouse Logitech",
+    "precio": 85000,
+    "stock": 30
+  },
+  {
+    "id": "1794145174806",
+    "nombre": "Mouse Logitect2",
+    "precio": 185000,
+    "stock": 100
+  }
+]
