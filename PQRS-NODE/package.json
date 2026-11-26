@@ -9,7 +9,8 @@
     "db:import": "C:\\xampp\\mysql\\bin\\mysql.exe --default-character-set=utf8mb4 -u root < db\\pqrs_system.sql",
     "add:is-internal": "node scripts/add-is-internal.js",
     "fix:seed": "node scripts/fix-seed.js",
-    "db:migrate": "C:\\xampp\\mysql\\bin\\mysql.exe --default-character-set=utf8mb4 -u root pqrs_node_system < db\\pqrs_system_2.sql"
+    "db:migrate": "C:\\xampp\\mysql\\bin\\mysql.exe --default-character-set=utf8mb4 -u root pqrs_node_system < db\\pqrs_system_2.sql",
+    "seed:manager": "node scripts/seed-manager-role.js"
   },
   "keywords": [
     "pqrs",
