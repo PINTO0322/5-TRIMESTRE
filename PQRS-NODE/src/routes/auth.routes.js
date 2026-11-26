@@ -4,6 +4,7 @@ const { authRequired } = require('../middlewares/auth.middleware');
 const { validate } = require('../middlewares/validate.middleware');
 const { loginSchema, selectRoleSchema } = require('../validators/auth.validator');
 const authController = require('../controllers/auth');
+const { myPermissions } = require('../controllers/auth/permissions.controller');
 
 const router = Router();
 
@@ -80,5 +81,18 @@ router.post('/select-role', authRequired, validate(selectRoleSchema), authContro
  */
 router.get('/roles', authRequired, authController.listRoles);
 
+/**
+ * @openapi
+ * /auth/health:
+ *   get:
+ *     tags: [Auth]
+ *     summary: Health check del router de auth
+ *     responses:
+ *       200: { description: Router operativo }
+ */
+router.get('/health', (req, res) => {
+  res.json({ success: true, message: 'Auth router operativo' });
+});
+router.get('/permissions', authRequired, myPermissions);
 module.exports = router;
 
